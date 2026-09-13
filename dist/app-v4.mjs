@@ -1,4 +1,4 @@
-import {careerMarkup} from './careers.mjs?v=4';
+import {careerMarkup} from './careers.mjs?v=5';
 import {normalizePreference,preferenceProgress} from './preference.mjs?v=4';
 import {types,roles,versions,evidence,calculate,ratingLabels} from './model.mjs';
 import {SESSION_KEY,createSession,recordAnswer,restoreSession} from './session.mjs';

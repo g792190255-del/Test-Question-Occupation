@@ -23,7 +23,7 @@ test('flat answers need two choices, then preserve scores',()=>{
 test('all fifteen roles have distinct occupational groups and honest salary limitations',()=>{
  for(const role of roles){const groups=careerCatalog[role.code];assert.equal(groups.length,4);
  const jobs=groups.flatMap(g=>g.jobs);assert.equal(jobs.length,17);assert.equal(new Set(jobs).size,17);
- const html=careerMarkup(role.code);assert.match(html,/这个结果仅供参考/);assert.match(html,/这些数据来源于职业求职软件，仅供参考/);
+ const html=careerMarkup(role.code);assert.match(html.replace(/<[^>]*>/g,''),/这个结果仅供参考/);assert.match(html.replace(/<[^>]*>/g,''),/这些数据来源于职业求职软件，仅供参考/);
  assert.equal((html.match(/class="salary-card"/g)||[]).length,6);assert.doesNotMatch(html,/BOSS|zhipin|查岗位与薪资/);
  }
 });
