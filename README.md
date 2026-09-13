@@ -1,4 +1,12 @@
-# 兴趣坐标
+# Test Question: Occupation
+
+兴趣坐标：霍兰德职业兴趣测试网站。包含简约版与完整版问卷、15 种原创角色、职业薪资参考、Supabase 结果保存及角色分布统计。
+
+- 网站文件：`dist/`，可直接部署为 HTTPS 静态网站。
+- 本地预览：运行 `node preview.mjs`，访问 `http://127.0.0.1:4173/`。
+- [服务器部署说明](docs/deployment.md)
+- [数据库结构与管理说明](supabase/README.md)
+- 数据库仍连接现有 Supabase 项目；仓库不包含用户测试数据或数据库管理凭据。
 
 Mobile-first Holland RIASEC career-interest exploration site. `dist/` contains the deployable static site.
 
