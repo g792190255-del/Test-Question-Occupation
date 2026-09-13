@@ -1,3 +1,4 @@
+import {onet60} from './onet60.mjs';
 export const types = [
  {code:'R',name:'现实型',verb:'动手实践',color:'#DC643F',likes:'操作工具、制作实物，在实际行动中解决问题',skill:'动手操作与制作',example:'我做过维修、搭建或制作，能独立完成具体操作。'},
  {code:'I',name:'研究型',verb:'探索原理',color:'#4165B6',likes:'追问原因、搜集证据，理解事物背后的规律',skill:'分析与研究',example:'我做过资料研究或问题分析，能整理证据并得出结论。'},
@@ -22,10 +23,27 @@ export const evidence = [
  {label:'尝试过，主要是自己的感受',detail:'初步尝试与主观感受'},
  {label:'还没有足够经历，我想继续探索',detail:'尚待实际体验验证'}
 ];
-export function calculate(answers) {
- if(!Array.isArray(answers)||answers.length!==18||answers.some(x=>!Number.isInteger(x)||x<0||x>4))throw new Error('请完成全部 18 道兴趣题。');
- const scores=Object.fromEntries(types.map(t=>[t.code,0]));questions.forEach((q,i)=>scores[q.type]+=answers[i]);
- const ranked=types.map(t=>({...t,score:scores[t.code]})).sort((a,b)=>b.score-a.score);
+export const versions={
+ brief:{name:'简约版',count:20,interestCount:18,minutes:'3～5',perType:3,questions},
+ full:{name:'完整版',count:60,interestCount:60,minutes:'10～15',perType:10,questions:onet60}
+};
+export const ratingLabels=['很不喜欢','不太喜欢','不确定','比较喜欢','非常喜欢'];
+export function calculate(answers,version='brief',preference=[]) {
+ const config=versions[version];
+ if(!config)throw new Error('未知的测试版本。');
+ if(!Array.isArray(answers)||answers.length!==config.interestCount||Array.from(answers).some(x=>!Number.isInteger(x)||x<1||x>5))throw new Error(`请完成全部 ${config.interestCount} 道兴趣题。`);
+ if(!Array.isArray(preference))throw new Error('偏好确认格式不正确。');
+ const scores=Object.fromEntries(types.map(t=>[t.code,0]));
+ config.questions.forEach((q,i)=>scores[q.type]+=answers[i]);
+ const ranked=types.map(t=>({...t,score:scores[t.code],average:scores[t.code]/config.perType,count:config.perType,max:config.perType*5})).sort((a,b)=>b.score-a.score);
  const possible=roles.filter(role=>Math.min(...[...role.code].map(c=>scores[c]))>=Math.max(...types.filter(t=>!role.code.includes(t.code)).map(t=>scores[t.code])));
- return {scores,ranked,possible,flat:ranked[0].score===ranked[5].score};
+ let primary=possible.length===1?possible[0]:null;
+ if(preference.length){
+  if(preference.length!==2||new Set(preference).size!==2||preference.some(c=>!types.some(t=>t.code===c)))throw new Error('请确认两个不同的兴趣方向。');
+  const choice=possible.find(r=>preference.every(c=>r.code.includes(c)));
+  if(!choice)throw new Error('所选方向不符合本次同分结果。');
+  primary=choice;
+ }
+ const cutoff=ranked[1].score;
+ return {scores,ranked,possible,primary,needsPreference:!primary,fixedCodes:ranked.filter(t=>t.score>cutoff).map(t=>t.code),tieCodes:ranked.filter(t=>t.score===cutoff).map(t=>t.code),resolvedByPreference:possible.length>1&&!!primary,flat:ranked[0].score===ranked[5].score,lowInterest:ranked[0].average<=2};
 }
