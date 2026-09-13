@@ -3,5 +3,5 @@ export function normalizePreference(result,selected=[]){
 }
 export function preferenceProgress(result,selected){
  const remaining=2-normalizePreference(result,selected).length;
- return remaining?`${result.fixedCodes.length?`已自动保留 ${result.fixedCodes.length} 个最高分方向；`:''}还需选择 ${remaining} 个方向`:'已确认 2 个方向，可以查看角色';
+ return remaining?`${result.fixedCodes.length?`已自动保留 ${result.fixedCodes.length} 个最高分方向；`:''}还需选择 ${remaining} 个方向`:result.fixedCodes.length?'已补选 1 个方向，可以查看角色':'已确认 2 个方向，可以查看角色';
 }
