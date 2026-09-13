@@ -7,7 +7,8 @@ const fs=require('node:fs/promises');
  try{
   for(const version of ['brief','full']){
    const page=await browser.newPage({viewport:{width:390,height:844}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
-   await page.goto('http://127.0.0.1:4173/?build=4');await page.locator('#choose').click();
+   await page.route('**/rpc/save_holland_result',route=>route.fulfill({status:200,contentType:'application/json',body:JSON.stringify({saved:true,run_id:route.request().postDataJSON().payload.run_id})}));
+   await page.goto('http://127.0.0.1:4173/?build=6');await page.locator('#choose').click();
    await page.locator(`input[name=version][value=${version}]`).check({force:true});await page.locator('#begin').click();
    const config=versions[version];
    for(let i=0;i<config.interestCount;i++){
